@@ -176,6 +176,31 @@
     height: auto;
   }
 
+  .checkbox-field{
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    margin-top: 4px;
+  }
+
+  .checkbox-field input[type="checkbox"]{
+    accent-color: var(--gold);
+    width: 15px;
+    height: 15px;
+    margin-top: 2px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  .checkbox-field label{
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    text-align: left;
+    cursor: pointer;
+  }
+
   .coming-soon{
     font-family: 'Inter', sans-serif;
     font-weight: 400;
@@ -242,6 +267,30 @@
     animation: rise 1s ease-out 1.9s forwards;
   }
 
+  .corporate-note{
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    max-width: 320px;
+    margin: 2.6rem 0 0;
+    opacity: 0;
+    animation: rise 1s ease-out 1.8s forwards;
+  }
+
+  .corporate-note a{
+    color: var(--ink-soft);
+    text-decoration: none;
+    border-bottom: 1px solid var(--hairline);
+    padding-bottom: 1px;
+    transition: color 0.3s ease, border-color 0.3s ease;
+  }
+
+  .corporate-note a:hover{
+    color: var(--ink);
+    border-color: var(--gold);
+  }
+
   .footer-rule{
     width: 24px;
     height: 1px;
@@ -274,7 +323,7 @@
   }
 
   @media (prefers-reduced-motion: reduce){
-    .logo-wrap, .slogan, .supporting, .interest-form, .coming-soon, .founding-teaser, .footer{
+    .logo-wrap, .slogan, .supporting, .interest-form, .coming-soon, .founding-teaser, .corporate-note, .footer{
       animation: none !important;
       opacity: 1 !important;
     }
@@ -314,6 +363,10 @@
           required
         >
       </div>
+      <div class="checkbox-field">
+        <input type="checkbox" name="corporate" id="corporateCheckbox">
+        <label for="corporateCheckbox">I'm interested in corporate membership for my team</label>
+      </div>
       <button type="submit" class="submit-btn">Join the Interest List</button>
       <div class="form-note" id="formNote">Thank you — you're on the list.</div>
     </form>
@@ -325,6 +378,8 @@
       <a class="founding-teaser-btn" href="founding50/">Learn About Founding 50 Membership</a>
     </div>
 
+    <p class="corporate-note">Exploring memberships for your team? Reach out at <a href="mailto:hello@thelinkside.com">hello@thelinkside.com</a>.</p>
+
     <div class="footer">
       <div class="footer-rule"></div>
       <div class="contact">
@@ -335,13 +390,21 @@
   </main>
 
 <script>
+  // --- Google Form connection ---
   const GOOGLE_FORM_ID = '1FAIpQLSdkKJQZwT4AsS5akgdZAcJOHtyjpQ4_93FFXH-R2myJeiLmaQ';
   const GOOGLE_EMAIL_ENTRY_ID = 'entry.1710924269';
+  // Add a Checkbox question to the interest Google Form — a single option
+  // like "Interested in corporate membership" — then use "Get pre-filled
+  // link" the same way as before to find this entry ID. The value below
+  // must match the checkbox option's exact text in the form.
+  const GOOGLE_CORPORATE_ENTRY_ID = 'entry.716658553';
+  const GOOGLE_CORPORATE_VALUE = 'Interested in Corporate Membership?';
 
   document.getElementById('interestForm').addEventListener('submit', function (e) {
     e.preventDefault();
 
     const emailInput = document.getElementById('emailInput');
+    const corporateCheckbox = document.getElementById('corporateCheckbox');
     const note = document.getElementById('formNote');
     const email = emailInput.value.trim();
 
@@ -350,6 +413,9 @@
     const formUrl = `https://docs.google.com/forms/d/e/${GOOGLE_FORM_ID}/formResponse`;
     const data = new FormData();
     data.append(GOOGLE_EMAIL_ENTRY_ID, email);
+    if (corporateCheckbox.checked) {
+      data.append(GOOGLE_CORPORATE_ENTRY_ID, GOOGLE_CORPORATE_VALUE);
+    }
 
     fetch(formUrl, {
       method: 'POST',
@@ -359,6 +425,7 @@
 
     note.classList.add('visible');
     emailInput.value = '';
+    corporateCheckbox.checked = false;
     emailInput.blur();
   });
 </script>
